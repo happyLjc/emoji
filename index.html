@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head >
+    <meta charset="UTF-8" >
+    <title >表情制作</title >
+    <style >
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        p {
+            margin-bottom: 10px;
+            padding-left: 10px;
+            height: 30px;
+            line-height: 30px;
+            font-size: 14px;
+        }
+        input.normal {
+            width: 200px;
+            height: 28px;
+            border: 1px solid #ccc;
+        }
+        .shot {
+            width: 80px;
+            height: 28px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .canvasWrapper {
+            margin: 0 auto;
+        }
+        canvas {
+            display: block;
+            margin: 0 auto;
+            border: 1px solid #ccc;
+        }
+        button {
+            width: 80px;
+            height: 30px;
+        }
+    </style >
+</head >
+<body >
+<p>
+    <label for="netImage" >添加网络图片</label >
+    <input type="text" id="netImage" class="normal" value="http://img.ngacn.cc/attachments/mon_201706/10/7Q13n-6abzZzT3cSpt-h0.png">
+    <button id="toDraw">画图</button>
+
+</p>
+<p>
+    <label for="word" >填充的文字</label >
+    <input type="color" value="#2D9900" id="color" />
+    <input type="num" placeholder="字体大小" maxlength="2" class="shot" id="size" value="12">
+    <input type="num" placeholder="左偏移"  class="shot" id="x">
+    <input type="num" placeholder="右偏移"  class="shot" id="y">
+    <input type="text" id="word" class="normal" placeholder="想写在图片上的字">
+    <button id="fillTxtBtn">确定</button>
+</p>
+<div class="wrapper" id="wrapper">
+
+</div>
+
+<script >
+    window.onload = function(){
+        var oNetImage = document.getElementById('netImage');
+        var oBtn = document.getElementById('toDraw');
+        var fillBtn = document.getElementById('fillTxtBtn');
+        var color = document.getElementById('color');
+        var bold = document.getElementById('bold');
+        var fontSizeInput = document.getElementById('size');
+        var iXInput = document.getElementById('x');
+        var iYInput = document.getElementById('y');
+        var oWord = document.getElementById('word');
+
+
+        oBtn.onclick = function () {
+
+            if(!checkType(oNetImage.value)){
+                alert('请选择jpg , png , 或者jpeg格式的图片');
+                return;
+            }
+
+            loadImage(oNetImage.value);
+            iXInput.value = 0;
+            iYInput.value = 0;
+            oWord.value = '';
+
+        }
+
+        fillBtn.onclick = function () {
+            if(!document.getElementById('canvas')){
+                alert('还没画图呢')
+                return;
+            }
+
+            if(fontSizeInput.value == 0){
+                alert('字体不能为0');
+                return;
+            }
+
+            var canvas = document.getElementById('canvas');
+            var ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = color.value;
+            ctx.font =  'bold ' + fontSizeInput.value + 'px Verdana';
+
+            ctx.fillText(oWord.value, iXInput.value, iYInput.value);
+            ctx.save();
+
+            iXInput.value = 0;
+            iYInput.value = 0;
+            oWord.value = '';
+        }
+    }
+
+    function checkType(str){
+        if(/jpg|png|jpeg/ig.test(str) || str.replace(/\s/ig, '') == ''){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    function loadImage(str){
+
+        if(!str){
+            alert('没有获取到图片地址')
+            return;
+        }
+
+        var oImage = new Image();
+
+        oImage.src = str;
+
+        oImage.onload = function () {
+
+            var width = oImage.width;
+            var height = oImage.height;
+
+            var clientWidth = document.documentElement.clientWidth;
+            var clientHeight = document.documentElement.clientHeight;
+
+            var availableHeight = clientHeight - 80;
+
+            var w = Math.min(width, clientWidth);
+            var h = Math.min(height, availableHeight);
+
+            createCanvas(w, h, oImage);
+
+        }
+
+        oImage.onerror = function () {
+            alert('没加载到图片')
+        }
+    }
+
+    function createCanvas(w, h, oImage){
+        var canvasTag = document.createElement('canvas');
+        canvasTag.id = 'canvas';
+        canvasTag.width = w;
+        canvasTag.height = h;
+
+        document.getElementById('wrapper').innerHTML = '';
+
+        document.getElementById('wrapper').appendChild(canvasTag)
+
+        draw(oImage);
+    }
+
+    function draw(oImage) {
+
+        var canvas = document.getElementById('canvas');
+        var width = canvas.width;
+        var height = canvas.height;
+
+        var ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, width, height)
+
+        ctx.drawImage(oImage, 0, 0, width, height)
+
+        getXY()
+    }
+
+    function getXY() {
+
+        var canvas = document.getElementById('canvas');
+
+        canvas.onclick = function(e){
+            var pageX = e.clientX;
+            var pageY = e.clientY;
+
+            var clientWidth = document.documentElement.clientWidth;
+
+            var canvasX = (clientWidth - canvas.width)/2;
+
+            var canvasY = 80; // 因为就2个p标签
+
+            document.getElementById('x').value = pageX - canvasX;
+            document.getElementById('y').value = pageY - canvasY
+        }
+
+    }
+
+</script >
+</body >
+</html >
