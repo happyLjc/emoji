@@ -38,6 +38,13 @@
             width: 80px;
             height: 30px;
         }
+        .intro {
+            position: absolute;
+            left: 0;
+            top: 80px;
+            width: 300px;
+
+        }
     </style >
 </head >
 <body >
@@ -57,6 +64,19 @@
     <input type="text" id="word" class="normal" placeholder="想写在图片上的字">
     <button id="fillTxtBtn">确定</button>
 </p>
+<div class="intro">
+    <h2>输入图片地址</h2>
+
+    <p>在图片输入框上黏贴网络图片地址(限定jpg, png, jpeg 格式); 然后点击画图</p>
+
+    <h2>文字处理</h2>
+
+    <p>选择颜色, 输入字体大小(1-99), 字体粗细, 在画板图片上点击, x, y 位置会自动计算, 也可以自己输入, 在 文字输入框里输入想写的话, 然后点击确定, 即可生成图片;</p>
+
+    <h2>保存</h2>
+
+    <p>右键保存图片, 此页面不涉及数据库保存功能, 页面刷新后不保存数据.</p>
+</div>
 <div class="wrapper" id="wrapper">
 
 </div>
